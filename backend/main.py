@@ -240,12 +240,24 @@ def _parse_llm_response(response: str) -> tuple:
 
 
 def _format_history(rounds: List[dict]) -> str:
+    """Format round history for LLM context."""
     history = []
     for r in rounds:
-        history.append(f"Narrativa: {r['narrative'][:200]}...")
+        history.append(f"Narrativa: {_smart_truncate(r['narrative'], 200)}...")
         if r['player_action']:
             history.append(f"Ação do jogador: {r['player_action']}")
     return "\n".join(history)
+
+
+def _smart_truncate(text: str, max_chars: int) -> str:
+    """Truncate text at a word boundary, preserving whole words."""
+    if len(text) <= max_chars:
+        return text
+    truncated = text[:max_chars]
+    last_space = truncated.rfind(" ")
+    if last_space > max_chars // 2:
+        return text[:last_space]
+    return truncated
 
 
 def _generate_log_file(game_state: GameState) -> str:

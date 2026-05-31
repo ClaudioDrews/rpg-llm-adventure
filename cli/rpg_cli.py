@@ -219,13 +219,25 @@ Formato de resposta:
             return response, ["Investigar mais a fundo", "Seguir em frente com cautela", "Tentar uma abordagem diferente"]
     
     def _format_history(self, rounds: list) -> str:
+        """Format round history for LLM context."""
         history = []
         for r in rounds:
-            history.append(f"Narrativa: {r['narrative'][:200]}...")
+            history.append(f"Narrativa: {self._smart_truncate(r['narrative'], 200)}...")
             if r['player_action']:
                 history.append(f"Ação: {r['player_action']}")
         return "\n".join(history)
-    
+
+    @staticmethod
+    def _smart_truncate(text: str, max_chars: int) -> str:
+        """Truncate text at a word boundary, preserving whole words."""
+        if len(text) <= max_chars:
+            return text
+        truncated = text[:max_chars]
+        last_space = truncated.rfind(" ")
+        if last_space > max_chars // 2:
+            return text[:last_space]
+        return truncated
+
     def save_log(self):
         logs_dir = Path(__file__).parent.parent / "logs"
         logs_dir.mkdir(exist_ok=True)
