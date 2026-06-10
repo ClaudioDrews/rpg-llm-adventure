@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 import asyncio
 from llm_manager import LLMManager
 from game_state import GameState, GameConfig
+from utils.text_parsers import parse_llm_response, format_history, smart_truncate
 from datetime import datetime
 import textwrap
 
@@ -128,7 +129,7 @@ Formato de resposta:
 2. (segunda opção)
 3. (terceira opção)"""
         response = await self.llm_manager.generate(intro_prompt, max_tokens=1500)
-        narrative, options = self._parse_response(response)
+        narrative, options = parse_llm_response(response)
         self.game_state.add_round(narrative, options)
         self._display_round(narrative, options, 1)
     
@@ -158,7 +159,7 @@ Formato de resposta:
             narrative = response.split("[NARRATIVA]")[-1].split("[FIM")[0].strip()
             options = []
         else:
-            narrative, options = self._parse_response(response)
+            narrative, options = parse_llm_response(response)
         self.game_state.add_round(narrative, options)
         self.clear()
         self._display_round(narrative, options, next_round, is_final)
@@ -173,7 +174,7 @@ Formato de resposta:
                 print(f"{i}. {option}")
     
     def _create_continuation_prompt(self, action: str, round_num: int) -> str:
-        history = self._format_history(self.game_state.rounds[-2:])
+        history = format_history(self.game_state.rounds[-2:])
         return f"""Continue a aventura de RPG (estilo Fighting Fantasy).
 
 RODADA {round_num}/20
@@ -198,7 +199,7 @@ Formato de resposta:
 3. (terceira opção)"""
     
     def _create_final_prompt(self, action: str) -> str:
-        history = self._format_history(self.game_state.rounds[-3:])
+        history = format_history(self.game_state.rounds[-3:])
         return f"""Continue a aventura de RPG (estilo Fighting Fantasy).
 
 RODADA FINAL (20/20) - CONCLUSÃO DA HISTÓRIA
@@ -220,42 +221,6 @@ Formato de resposta:
 (texto conclusivo - 3-4 parágrafos)
 
 [FIM DA AVENTURA]"""
-    
-    def _parse_response(self, response: str) -> tuple:
-        try:
-            parts = response.split("[OPÇÕES]")
-            narrative = parts[0].replace("[NARRATIVA]", "").strip()
-            options_text = parts[1].strip()
-            options = []
-            for line in options_text.split("\n"):
-                line = line.strip()
-                if line and (line[0].isdigit() or line.startswith("-")):
-                    option = line.split(".", 1)[-1].strip()
-                    if option:
-                        options.append(option)
-            return narrative, options[:3]
-        except:
-            return response, ["Investigar mais a fundo", "Seguir em frente com cautela", "Tentar uma abordagem diferente"]
-    
-    def _format_history(self, rounds: list) -> str:
-        """Format round history for LLM context."""
-        history = []
-        for r in rounds:
-            history.append(f"Narrativa: {self._smart_truncate(r['narrative'], 200)}...")
-            if r['player_action']:
-                history.append(f"Ação: {r['player_action']}")
-        return "\n".join(history)
-
-    @staticmethod
-    def _smart_truncate(text: str, max_chars: int) -> str:
-        """Truncate text at a word boundary, preserving whole words."""
-        if len(text) <= max_chars:
-            return text
-        truncated = text[:max_chars]
-        last_space = truncated.rfind(" ")
-        if last_space > max_chars // 2:
-            return text[:last_space]
-        return truncated
 
     def save_log(self):
         logs_dir = Path(__file__).parent.parent / "logs"
