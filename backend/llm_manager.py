@@ -8,6 +8,15 @@ import os
 from typing import Optional, Literal
 import json
 
+# Timeouts por provider (segundos)
+TIMEOUTS = {
+    "ollama": 300.0,    # modelos locais podem ser muito lentos (70B+)
+    "openai": 60.0,
+    "anthropic": 60.0,
+}
+
+DEFAULT_TIMEOUT = 60.0
+
 
 class LLMManager:
     """Gerencia conexões com diferentes provedores de LLM"""
@@ -46,7 +55,8 @@ class LLMManager:
     
     async def _generate_ollama(self, prompt: str, max_tokens: int) -> str:
         """Gera usando Ollama local"""
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        timeout = TIMEOUTS.get("ollama", DEFAULT_TIMEOUT)
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try:
                 response = await client.post(
                     f"{self.ollama_url}/api/generate",
@@ -73,7 +83,8 @@ class LLMManager:
     
     async def _generate_openai(self, prompt: str, max_tokens: int) -> str:
         """Gera usando OpenAI API"""
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        timeout = TIMEOUTS.get("openai", DEFAULT_TIMEOUT)
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try:
                 response = await client.post(
                     "https://api.openai.com/v1/chat/completions",
@@ -102,7 +113,8 @@ class LLMManager:
     
     async def _generate_anthropic(self, prompt: str, max_tokens: int) -> str:
         """Gera usando Anthropic API"""
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        timeout = TIMEOUTS.get("anthropic", DEFAULT_TIMEOUT)
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try:
                 response = await client.post(
                     "https://api.anthropic.com/v1/messages",
