@@ -28,6 +28,3 @@ Thumbs.db
 .env
 .env.local
 config.local.json
-
-# Test files
-test_*.py
