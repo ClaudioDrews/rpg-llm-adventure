@@ -25,6 +25,7 @@ from llm_manager import LLMManager
 from game_state import GameState, GameConfig
 from utils.text_parsers import parse_llm_response, format_history
 from services.log_service import generate_log_file
+from services.game_store import GameStore
 
 
 def get_local_ip():
@@ -68,6 +69,14 @@ def get_local_ip():
 
 app = FastAPI(title="RPG LLM Adventure")
 
+@app.on_event("startup")
+async def startup():
+    await game_store.start_cleanup()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await game_store.stop_cleanup()
+
 # Configurações
 LOGS_DIR = Path(__file__).parent.parent / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -75,7 +84,7 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 # Configurar diretório do frontend
 FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
 
-active_games = {}
+game_store = GameStore(ttl_seconds=3600)
 
 # Models
 class GameSetup(BaseModel):
@@ -149,7 +158,7 @@ async def start_game(setup: GameSetup) -> GameResponse:
             llm_manager=llm_manager,
             total_rounds=setup.total_rounds
         )
-        active_games[session_id] = game_state
+        game_store.set(session_id, game_state)
         
         # Gerar introdução
         total_rounds = setup.total_rounds
@@ -230,10 +239,10 @@ Formato de resposta:
 async def process_action(action: PlayerAction) -> GameResponse:
     """Processa uma ação do jogador"""
     try:
-        if action.session_id not in active_games:
+        if action.session_id not in game_store:
             raise HTTPException(status_code=404, detail="Sessão não encontrada")
         
-        game_state = active_games[action.session_id]
+        game_state = game_store.get(action.session_id)
         
         # Verificar se o jogo já terminou
         total_rounds = game_state.total_rounds
@@ -406,10 +415,10 @@ Formato de resposta:
 async def end_game(action: PlayerAction) -> GameResponse:
     """Força a conclusão da aventura na rodada atual"""
     try:
-        if action.session_id not in active_games:
+        if action.session_id not in game_store:
             raise HTTPException(status_code=404, detail="Sessão não encontrada")
         
-        game_state = active_games[action.session_id]
+        game_state = game_store.get(action.session_id)
         
         if game_state.rounds:
             game_state.rounds[-1]["player_action"] = "Concluir aventura"

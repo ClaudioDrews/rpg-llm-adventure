@@ -9,6 +9,8 @@ from datetime import datetime
 if TYPE_CHECKING:
     from llm_manager import LLMManager
 
+MAX_ROUNDS_FREE_MODE = 100  # sanity limit para modo "Até o fim"
+
 
 @dataclass
 class GameConfig:
@@ -40,7 +42,12 @@ class GameState:
         options: List[str],
         player_action: Optional[str] = None
     ):
-        """Adiciona uma nova rodada ao histórico"""
+        """Adiciona uma nova rodada ao histórico."""
+        if self.total_rounds == 0 and self.current_round >= MAX_ROUNDS_FREE_MODE:
+            raise ValueError(
+                f"Limite de segurança do modo livre atingido "
+                f"({MAX_ROUNDS_FREE_MODE} rodadas)"
+            )
         self.current_round += 1
         self.rounds.append({
             "round_number": self.current_round,
