@@ -2,8 +2,6 @@
 
 # Script de inicialização rápida do RPG LLM Adventure
 
-set -e
-
 echo "============================================================"
 echo "🎲 RPG LLM ADVENTURE - Inicialização"
 echo "============================================================"
