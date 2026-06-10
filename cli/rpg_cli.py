@@ -16,7 +16,7 @@ import textwrap
 
 class TerminalUI:
     def __init__(self):
-        self.llm_manager = LLMManager()
+        self.llm_manager = None  # Será configurado em setup_game()
         self.game_state = None
         self.width = 80
     
@@ -63,7 +63,12 @@ class TerminalUI:
                 print("❌ API Key é obrigatória!")
                 sys.exit(1)
         try:
-            self.llm_manager.configure(llm_type, model, api_key)
+            # Bug A corrigido: LLMManager recebe tudo no __init__, sem configure()
+            self.llm_manager = LLMManager(
+                llm_type=llm_type,
+                model=model,
+                api_key=api_key
+            )
             print(f"\n✅ LLM configurado: {llm_type} ({model})")
         except Exception as e:
             print(f"\n❌ Erro: {e}")
@@ -75,9 +80,23 @@ class TerminalUI:
         context = input("Contexto [reino em guerra]: ").strip() or "reino em guerra"
         protagonist = input("Protagonista [um jovem aventureiro]: ").strip() or "um jovem aventureiro"
         characters = input("Personagens [magos, guerreiros e criaturas]: ").strip() or "magos, guerreiros e criaturas místicas"
-        config = GameConfig(llm_type=llm_type, llm_model=model, api_key=api_key, narrative_style=narrative_style, era=era, context=context, protagonist=protagonist, characters=characters)
+        
+        # Bug B corrigido: GameConfig não aceita api_key
+        config = GameConfig(
+            llm_type=llm_type,
+            llm_model=model,
+            narrative_style=narrative_style,
+            era=era,
+            context=context,
+            protagonist=protagonist,
+            characters=characters
+        )
         session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.game_state = GameState(config=config, session_id=session_id)
+        self.game_state = GameState(
+            config=config,
+            session_id=session_id,
+            llm_manager=self.llm_manager
+        )
         print("\n✅ Configuração concluída!")
         input("\nPressione ENTER para começar a aventura...")
     
