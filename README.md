@@ -70,36 +70,6 @@ cd backend && python main.py
 
 ---
 
-## 🤖 Model Recommendations
-
-### Local & Free (Ollama)
-
-| Model | Quality | Speed | Best for |
-|-------|---------|-------|----------|
-| `llama3.2` (3B) | Good | Fast | Quick games, low-RAM machines |
-| `dolphin3.0` (8B) | Better | Moderate | Creative, uncensored storytelling |
-| `llama3.1` (8B) | Very good | Moderate | Balanced quality and speed |
-
-### Open-Source APIs
-
-| Provider | Model | Notes |
-|----------|-------|-------|
-| **DeepSeek** | `deepseek-chat` (V3) | Excellent narrative quality at a fraction of proprietary API cost |
-| **Moonshot/Kimi** | `kimi-k2.5` | Strong instruction following, great for complex story arcs |
-| **Zhipu/GLM** | `glm-5` | Solid performance, good fallback option |
-
-> **Recommended stack:** Ollama for free local play + DeepSeek API for cloud quality without vendor lock-in.
-
-### Proprietary APIs
-
-| Provider | Model | Notes |
-|----------|-------|-------|
-| OpenAI | `gpt-4o-mini` | Cheap, good enough |
-| OpenAI | `gpt-4o` | Best quality, higher cost |
-| Anthropic | `claude-sonnet-4` | Excellent narrative, creative style |
-
----
-
 ## 🎮 How to Play
 
 ### Web Interface
