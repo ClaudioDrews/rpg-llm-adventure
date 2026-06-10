@@ -23,6 +23,7 @@ import httpx
 # Importar módulos do projeto
 from llm_manager import LLMManager
 from game_state import GameState, GameConfig
+from utils.text_parsers import parse_llm_response, format_history
 
 
 def get_local_ip():
@@ -208,7 +209,7 @@ Formato de resposta:
 3. (terceira opção)"""
 
         response = await llm_manager.generate(intro_prompt)
-        narrative, options = _parse_llm_response(response)
+        narrative, options = parse_llm_response(response)
         
         # Salvar no estado
         game_state.add_round(narrative, options, None)
@@ -275,7 +276,7 @@ IDIOMA:
 RODADA FINAL ({total_rounds}/{total_rounds}) - CONCLUSÃO DA HISTÓRIA
 
 Contexto da história:
-{_format_history(game_state.rounds[-3:])}
+{format_history(game_state.rounds[-3:])}
 
 Última ação do jogador: {chosen_action}
 
@@ -330,7 +331,7 @@ IDIOMA:
 RODADA {next_round}/{total_rounds}
 
 Contexto recente:
-{_format_history(game_state.rounds[-2:])}
+{format_history(game_state.rounds[-2:])}
 
 Última ação do jogador: {chosen_action}
 
@@ -376,7 +377,7 @@ Formato de resposta:
             narrative = response.split("[NARRATIVA]")[-1].split("[FIM")[0].strip()
             options = []
         else:
-            narrative, options = _parse_llm_response(response)
+            narrative, options = parse_llm_response(response)
         
         # Salvar no estado
         game_state.add_round(narrative, options, chosen_action)
@@ -434,7 +435,7 @@ IDIOMA:
 RODADA FINAL — CONCLUSÃO DA HISTÓRIA
 
 Contexto da história:
-{_format_history(game_state.rounds[-3:])}
+{format_history(game_state.rounds[-3:])}
 
 Última ação do jogador: Decidiu concluir a aventura
 
@@ -538,81 +539,6 @@ async def favicon():
     </svg>'''
     return Response(content=svg_content, media_type="image/svg+xml")
 
-
-# ============ FUNÇÕES AUXILIARES ============
-
-def _parse_llm_response(response: str) -> tuple[str, list[str]]:
-    """Extrai narrativa e opções da resposta da LLM com parsing robusto.
-    
-    Aceita múltiplos formatos de marcadores e numeração de opções.
-    Fallback heurístico quando o formato esperado não é encontrado.
-    Sempre retorna 3 opções.
-    """
-    text = response.replace('\r\n', '\n')
-    
-    # Extrair narrativa — tudo antes de [OPÇÕES], [OPTIONS], ou [FIM]
-    narrative_match = re.search(
-        r'\[NARRATIVA\]\s*(.*?)(?=\[(?:OPÇÕES|OPTIONS|FIM)|\Z)',
-        text, re.DOTALL | re.IGNORECASE
-    )
-    narrative = narrative_match.group(1).strip() if narrative_match else text.strip()
-    
-    # Extrair opções
-    options = []
-    options_match = re.search(
-        r'\[(?:OPÇÕES|OPTIONS)\]\s*(.*?)(?=\[FIM|\Z)',
-        text, re.DOTALL | re.IGNORECASE
-    )
-    if options_match:
-        options_text = options_match.group(1)
-        # Captura "1. Opção", "1) Opção", "- Opção", "* Opção"
-        option_pattern = (
-            r'(?:^|\n)\s*'
-            r'(?:\d+[\.\)]\s*|[-*]\s*)'
-            r'\s*(.+?)'
-            r'(?=(?:\n\s*(?:\d+[\.\)]|[-*]\s))|\Z)'
-        )
-        options = [
-            m.strip()
-            for m in re.findall(option_pattern, options_text, re.MULTILINE)
-            if m.strip()
-        ]
-    
-    # Fallback: se não encontrou marcadores, tenta heurística
-    if not options:
-        lines = [l.strip() for l in text.split('\n') if l.strip()]
-        if len(lines) >= 3:
-            # Últimas linhas curtas (<100 chars, sem ponto final) viram opções
-            candidate_lines = [
-                l for l in lines[-5:]
-                if len(l) < 100 and not l.endswith('.')
-            ]
-            if len(candidate_lines) >= 3:
-                options = candidate_lines[-3:]
-                if len(lines) > 3:
-                    narrative = '\n'.join(lines[:-3])
-    
-    # Garantir exatamente 3 opções
-    fallback_options = [
-        "Investigar mais a fundo",
-        "Seguir em frente com cautela",
-        "Tentar uma abordagem diferente"
-    ]
-    
-    final_options = options[:3]
-    while len(final_options) < 3:
-        final_options.append(fallback_options[len(final_options)])
-    
-    return narrative, final_options
-
-def _format_history(rounds: List[dict]) -> str:
-    """Formata histórico de rodadas para contexto"""
-    history = []
-    for r in rounds:
-        history.append(f"Narrativa: {r['narrative'][:200]}...")
-        if r['player_action']:
-            history.append(f"Ação do jogador: {r['player_action']}")
-    return "\n".join(history)
 
 def _generate_log_file(game_state: GameState) -> str:
     """Gera arquivo de log da aventura em Markdown com frontmatter YAML"""
