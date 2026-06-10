@@ -10,23 +10,6 @@ A text-based RPG inspired by the classic *Fighting Fantasy* gamebooks by Ian Liv
 
 ---
 
-## Why this exists
-
-Most AI RPG tools lock you into a single provider's API. You pay per token. You lose control when the service goes down. And the English-only interfaces ignore entire communities of players.
-
-RPG LLM Adventure is different:
-
-| | Typical AI RPG | This project |
-|---|---|---|
-| **Models** | Locked to one API | Ollama (local), OpenAI, Anthropic — swap anytime |
-| **Language** | English only | Portuguese + English, auto-detects your browser |
-| **Cost** | Pay-per-token | Ollama mode is **completely free** |
-| **Privacy** | Stories sent to cloud | Local mode keeps everything on your machine |
-| **Interface** | Single theme | Terminal CRT mode + Book Mode (parchment) |
-| **Rounds** | Fixed length | 8, 12, 20, or unlimited |
-
----
-
 ## ✨ Features
 
 - 🤖 **Multiple backends** — Ollama (local), OpenAI, Anthropic. Mix and match.
