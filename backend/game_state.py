@@ -62,7 +62,7 @@ class GameState:
         return self.rounds[-last_n:] if self.rounds else []
     
     def is_complete(self) -> bool:
-        """Verifica se o jogo está completo"""
-        if self.total_rounds == 0:
-            return False  # Modo 'Até o fim' nunca termina por contagem
+        """Verifica se o jogo está completo."""
+        if self.total_rounds <= 0:
+            return False  # Modo livre (0 ou negativo)
         return self.current_round >= self.total_rounds
