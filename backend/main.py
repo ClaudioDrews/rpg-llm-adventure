@@ -486,13 +486,22 @@ Formato de resposta:
 
 @app.get("/api/logs/{filename}")
 async def download_log(filename: str):
-    """Download do arquivo de log"""
-    file_path = (LOGS_DIR / filename).resolve()
-    if not file_path.is_relative_to(LOGS_DIR):
+    """Download do arquivo de log com sanitização de path."""
+    # Sanitizar: apenas alfanumérico, underscore, hífen, ponto
+    safe_name = re.sub(r'[^a-zA-Z0-9_\-\.]', '', filename)
+    if not safe_name or not safe_name.endswith('.md'):
         raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    file_path = (LOGS_DIR / safe_name).resolve()
+    logs_resolved = LOGS_DIR.resolve()
+    try:
+        file_path.relative_to(logs_resolved)
+    except ValueError:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Arquivo não encontrado")
-    return FileResponse(file_path, filename=filename)
+    return FileResponse(file_path, filename=safe_name)
 
 @app.get("/api/ollama/models")
 async def list_ollama_models():
