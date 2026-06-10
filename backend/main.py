@@ -90,6 +90,13 @@ class GameSetup(BaseModel):
     total_rounds: int = 20
     lang: str = 'pt'
 
+    def model_dump_masked(self) -> dict:
+        """Retorna representação com api_key mascarada para logging seguro."""
+        data = self.model_dump()
+        if data.get('api_key'):
+            data['api_key'] = '***'
+        return data
+
 class PlayerAction(BaseModel):
     session_id: str
     action: str  # "1", "2", "3" ou texto customizado
