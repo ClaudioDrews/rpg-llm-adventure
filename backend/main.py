@@ -24,6 +24,7 @@ import httpx
 from llm_manager import LLMManager
 from game_state import GameState, GameConfig
 from utils.text_parsers import parse_llm_response, format_history
+from services.log_service import generate_log_file
 
 
 def get_local_ip():
@@ -385,7 +386,7 @@ Formato de resposta:
         # Se final, gerar arquivo de log
         log_file = None
         if is_final:
-            log_file = _generate_log_file(game_state)
+            log_file = generate_log_file(game_state, LOGS_DIR)
         
         return GameResponse(
             session_id=action.session_id,
@@ -476,7 +477,7 @@ Formato de resposta:
         
         game_state.add_round(narrative, [], "Concluir aventura")
         
-        log_file = _generate_log_file(game_state)
+        log_file = generate_log_file(game_state, LOGS_DIR)
         
         return GameResponse(
             session_id=action.session_id,
@@ -538,75 +539,6 @@ async def favicon():
         <text x="4" y="24" font-family="monospace" font-size="20" fill="#33ff33" font-weight="bold">&gt;_</text>
     </svg>'''
     return Response(content=svg_content, media_type="image/svg+xml")
-
-
-def _generate_log_file(game_state: GameState) -> str:
-    """Gera arquivo de log da aventura em Markdown com frontmatter YAML"""
-    data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    filename = f"aventura_{game_state.session_id}.md"
-    filepath = LOGS_DIR / filename
-
-    total_rounds = len(game_state.rounds)
-    c = game_state.config
-
-    # Escapar aspas simples para YAML
-    def esc(val: str) -> str:
-        return val.replace('"', '\\"')
-
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write("---\n")
-        f.write(f'title: "Aventura Fantástica"\n')
-        f.write(f'date: "{data_atual}"\n')
-        f.write(f'session: "{game_state.session_id}"\n')
-        f.write(f'llm_type: "{esc(c.llm_type)}"\n')
-        f.write(f'llm_model: "{esc(c.llm_model)}"\n')
-        f.write(f'narrative_style: "{esc(c.narrative_style)}"\n')
-        f.write(f'era: "{esc(c.era)}"\n')
-        f.write(f'context: "{esc(c.context)}"\n')
-        f.write(f'protagonist: "{esc(c.protagonist)}"\n')
-        f.write(f'characters: "{esc(c.characters)}"\n')
-        f.write(f'total_rounds: {total_rounds}\n')
-        f.write("---\n\n")
-
-        f.write("# Aventura Fantástica\n\n")
-        f.write(f"**Data:** {data_atual}  \n")
-        f.write(f"**Sessão:** {game_state.session_id}\n\n")
-
-        f.write("## Configuração da Aventura\n\n")
-        f.write(f"| Campo | Valor |\n")
-        f.write(f"|-------|-------|\n")
-        f.write(f"| Estilo Narrativo | {c.narrative_style} |\n")
-        f.write(f"| Época | {c.era} |\n")
-        f.write(f"| Contexto | {c.context} |\n")
-        f.write(f"| Protagonista | {c.protagonist} |\n")
-        f.write(f"| Personagens | {c.characters} |\n")
-        f.write(f"| LLM | {c.llm_type} ({c.llm_model}) |\n\n")
-
-        for i, round_data in enumerate(game_state.rounds, 1):
-            is_last = (i == total_rounds)
-
-            if is_last:
-                f.write("---\n\n")
-                f.write("## Conclusão\n\n")
-            else:
-                f.write(f"### Rodada {i}/{total_rounds}\n\n")
-
-            f.write(round_data['narrative'])
-            f.write("\n\n")
-
-            if round_data['options']:
-                f.write("**Opções:**\n\n")
-                for j, option in enumerate(round_data['options'], 1):
-                    f.write(f"{j}. {option}\n")
-                f.write("\n")
-
-            if round_data['player_action']:
-                f.write(f"> **Ação do jogador:** {round_data['player_action']}\n\n")
-
-        f.write("\n---\n")
-        f.write("*Fim da aventura — gerado por RPG LLM Adventure*\n")
-
-    return filename
 
 
 # ============ INICIALIZAÇÃO ============
