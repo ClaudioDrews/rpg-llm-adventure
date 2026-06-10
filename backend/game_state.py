@@ -3,8 +3,11 @@ Game State - Gerenciamento do estado do jogo
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING, Any
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from llm_manager import LLMManager
 
 
 @dataclass
@@ -12,12 +15,12 @@ class GameConfig:
     """Configuração da aventura"""
     llm_type: str
     llm_model: str
-    api_key: Optional[str]
     narrative_style: str
     era: str
     context: str
     protagonist: str
     characters: str
+    lang: str = 'pt'
 
 
 @dataclass
@@ -25,11 +28,18 @@ class GameState:
     """Estado completo de uma sessão de jogo"""
     config: GameConfig
     session_id: str
+    llm_manager: Any = None  # LLMManager instance, set after creation
     current_round: int = 0
     rounds: List[dict] = field(default_factory=list)
     started_at: datetime = field(default_factory=datetime.now)
+    total_rounds: int = 20  # 0 significa modo 'Até o fim'
     
-    def add_round(self, narrative: str, options: List[str], player_action: Optional[str] = None):
+    def add_round(
+        self,
+        narrative: str,
+        options: List[str],
+        player_action: Optional[str] = None
+    ):
         """Adiciona uma nova rodada ao histórico"""
         self.current_round += 1
         self.rounds.append({
@@ -46,4 +56,6 @@ class GameState:
     
     def is_complete(self) -> bool:
         """Verifica se o jogo está completo"""
-        return self.current_round >= 20
+        if self.total_rounds == 0:
+            return False  # Modo 'Até o fim' nunca termina por contagem
+        return self.current_round >= self.total_rounds

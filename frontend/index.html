@@ -8,16 +8,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --terminal-bg: #000000;
             --terminal-green: #33ff33;
             --terminal-bright: #00ff41;
             --terminal-dark: #0a0a0a;
             --terminal-dim: #1a801a;
-            --glow: 0 0 5px rgba(51, 255, 51, 0.5), 0 0 10px rgba(51, 255, 51, 0.3);
-            --glow-intense: 0 0 10px rgba(51, 255, 51, 0.8), 0 0 20px rgba(51, 255, 51, 0.5);
+            --glow: 0 0 5px rgba(51, 255, 51, 0.5), 
+                    0 0 10px rgba(51, 255, 51, 0.3);
+            --glow-intense: 0 0 10px rgba(51, 255, 51, 0.8), 
+                           0 0 20px rgba(51, 255, 51, 0.5);
         }
+
         body {
             font-family: 'VT323', monospace;
             background-color: #000;
@@ -28,6 +36,8 @@
             overflow-x: hidden;
             text-shadow: var(--glow);
         }
+
+        /* Container principal com efeito de terminal CRT */
         .book-container {
             max-width: 900px;
             margin: 0 auto;
@@ -39,28 +49,44 @@
             overflow: hidden;
             animation: flicker 0.15s infinite;
         }
+
+        /* Scanlines Overlay */
         .book-container::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%
+            );
             background-size: 100% 4px;
             pointer-events: none;
             z-index: 10;
         }
+
+        /* Efeito de curvatura da tela */
         .book-container::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 100%);
             pointer-events: none;
             z-index: 11;
         }
+
         @keyframes flicker {
             0% { opacity: 0.98; }
             50% { opacity: 1; }
             100% { opacity: 0.99; }
         }
+
+        /* Header Terminal */
         .header {
             background: var(--terminal-bg);
             color: var(--terminal-bright);
@@ -69,7 +95,11 @@
             border-bottom: 1px solid var(--terminal-green);
             position: relative;
         }
-        .header::after { display: none; }
+
+        .header::after {
+            display: none;
+        }
+
         h1 {
             font-family: 'VT323', monospace;
             font-size: clamp(2rem, 6vw, 4rem);
@@ -79,15 +109,32 @@
             text-shadow: var(--glow-intense);
             margin-bottom: 0.5rem;
         }
+
         .subtitle {
             font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 0.2em;
             color: var(--terminal-dim);
         }
-        .content { padding: 2rem 1.5rem; position: relative; z-index: 1; }
-        .section { margin-bottom: 2rem; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Conteúdo principal */
+        .content {
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Seções */
+        .section {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .section-title {
             font-family: 'VT323', monospace;
             font-size: 1.8rem;
@@ -98,7 +145,12 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
-        .form-group { margin-bottom: 1.5rem; }
+
+        /* Formulário de setup */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
         label {
             display: block;
             font-family: 'VT323', monospace;
@@ -107,6 +159,7 @@
             font-size: 1.2rem;
             text-transform: uppercase;
         }
+
         input, select, textarea {
             width: 100%;
             padding: 0.75rem;
@@ -118,14 +171,25 @@
             color: var(--terminal-green);
             transition: all 0.2s ease;
         }
+
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--terminal-bright);
             box-shadow: 0 0 10px rgba(51, 255, 51, 0.4);
             background: #111;
         }
-        ::placeholder { color: var(--terminal-dim); opacity: 0.7; }
-        textarea { resize: vertical; min-height: 80px; }
+
+        ::placeholder {
+            color: var(--terminal-dim);
+            opacity: 0.7;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Botões */
         .btn {
             font-family: 'VT323', monospace;
             padding: 1rem 2rem;
@@ -142,26 +206,138 @@
             text-shadow: var(--glow);
             position: relative;
         }
+
         .btn:hover {
             background: rgba(51, 255, 51, 0.1);
             box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
             color: var(--terminal-bright);
             border-color: var(--terminal-bright);
         }
-        .btn:active { background: rgba(51, 255, 51, 0.2); }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--terminal-dim); color: var(--terminal-dim); }
+
+        .btn:active {
+            background: rgba(51, 255, 51, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--terminal-dim);
+            color: var(--terminal-dim);
+        }
+
+        .btn-small {
+            font-family: 'VT323', monospace;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: var(--terminal-green);
+            border: 1px solid var(--terminal-green);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-shadow: var(--glow);
+        }
+
+        .btn-small:hover {
+            background: rgba(51, 255, 51, 0.1);
+            box-shadow: 0 0 15px rgba(51, 255, 51, 0.3);
+            color: var(--terminal-bright);
+            border-color: var(--terminal-bright);
+        }
+
+        /* Tema toggle button */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-family: 'VT323', monospace;
+            padding: 0.3rem 0.8rem;
+            background: transparent;
+            color: var(--terminal-green);
+            border: 1px solid var(--terminal-dim);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .theme-toggle-btn:hover {
+            opacity: 1;
+            border-color: var(--terminal-green);
+            background: rgba(51, 255, 51, 0.1);
+        }
+
+        .model-select-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+
+        .model-select-row select {
+            flex: 1;
+        }
+
+        .model-select-row .btn-small {
+            flex-shrink: 0;
+        }
+
+        .advanced-section {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border: 1px solid var(--terminal-dim);
+            border-radius: 4px;
+        }
+
+        .advanced-section summary {
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            color: var(--terminal-dim);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .advanced-section summary:hover {
+            color: var(--terminal-green);
+        }
+
+        /* Narrativa */
         .narrative {
             background: var(--terminal-dark);
-            padding: 1.5rem;
+            padding: 2rem;
             border-left: 2px solid var(--terminal-green);
-            margin-bottom: 2rem;
-            font-size: 1.3rem;
-            line-height: 1.4;
+            margin: 0 auto 2rem auto;
+            max-width: 800px;
+            font-size: 1.2rem;
+            line-height: 1.7;
             text-align: left;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
-        .narrative::first-letter { font-size: inherit; font-weight: inherit; float: none; line-height: inherit; margin-right: 0; color: inherit; font-family: inherit; }
-        .options { display: grid; gap: 1rem; margin-bottom: 2rem; }
+
+        /* Remover capitular decorativa */
+        .narrative::first-letter {
+            font-size: inherit;
+            font-weight: inherit;
+            float: none;
+            line-height: inherit;
+            margin-right: 0;
+            color: inherit;
+            font-family: inherit;
+        }
+
+        /* Opções */
+        .options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
         .option-btn {
             background: transparent;
             border: 1px solid var(--terminal-green);
@@ -175,18 +351,30 @@
             color: var(--terminal-green);
             position: relative;
         }
+
         .option-btn:hover {
             background: rgba(51, 255, 51, 0.1);
             border-color: var(--terminal-bright);
             transform: translateX(5px);
             box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
         }
-        .option-text { margin-left: 0.5rem; }
+
+        .option-text {
+            margin-left: 0.5rem;
+        }
+
+        /* Cursor piscante para inputs */
         .custom-action input {
             border-right: 8px solid var(--terminal-green);
             animation: blink-cursor 0.8s step-end infinite;
         }
-        @keyframes blink-cursor { from, to { border-right-color: transparent; } 50% { border-right-color: var(--terminal-green); } }
+
+        @keyframes blink-cursor {
+            from, to { border-right-color: transparent; }
+            50% { border-right-color: var(--terminal-green); }
+        }
+
+        /* Status bar */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -199,18 +387,35 @@
             font-family: 'VT323', monospace;
             font-size: 1.2rem;
         }
-        .round-counter { color: var(--terminal-bright); }
-        .loading { text-align: center; padding: 2rem; color: var(--terminal-green); }
+
+        .round-counter {
+            color: var(--terminal-bright);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--terminal-green);
+        }
+
         .spinner {
             border: 2px solid var(--terminal-dark);
             border-top: 2px solid var(--terminal-bright);
             border-radius: 50%;
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
             box-shadow: 0 0 10px rgba(51, 255, 51, 0.3);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
         .footer {
             text-align: center;
             padding: 1.5rem;
@@ -221,9 +426,16 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
-        .hidden { display: none; }
+
+        /* Utilitários */
+        .hidden {
+            display: none;
+        }
+
         .mt-2 { margin-top: 2rem; }
         .mb-2 { margin-bottom: 2rem; }
+
+        /* Responsive */
         @media (max-width: 640px) {
             body { padding: 0.5rem; }
             .content { padding: 1.5rem 1rem; }
@@ -233,6 +445,8 @@
             .narrative { font-size: 1.1rem; padding: 1rem; }
             .option-btn { padding: 0.8rem; }
         }
+
+        /* Mensagem de sucesso */
         .success-msg {
             background: rgba(51, 255, 51, 0.05);
             border: 1px solid var(--terminal-green);
@@ -243,6 +457,8 @@
             text-align: center;
             font-size: 1.2rem;
         }
+
+        /* Link de download */
         .download-link {
             display: inline-block;
             color: var(--terminal-bright);
@@ -251,94 +467,368 @@
             padding-bottom: 2px;
             transition: all 0.3s ease;
         }
-        .download-link:hover { color: #fff; border-color: #fff; text-shadow: 0 0 10px #fff; }
+
+        .download-link:hover {
+            color: #fff;
+            border-color: #fff;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        /* ===== MODO LIVRO ===== */
+        body.livro-mode {
+            background-color: #faf3e0;
+            color: #3d2b1f;
+            font-family: Georgia, serif;
+            text-shadow: none;
+        }
+
+        body.livro-mode .book-container {
+            background: #faf3e0;
+            border-color: #8b7355;
+            box-shadow: 0 4px 20px rgba(61, 43, 31, 0.15);
+            animation: none;
+        }
+
+        body.livro-mode .book-container::before {
+            display: none;
+        }
+
+        body.livro-mode .book-container::after {
+            display: none;
+        }
+
+        body.livro-mode h1 {
+            font-family: Georgia, serif;
+            text-shadow: none;
+            color: #3d2b1f;
+        }
+
+        body.livro-mode .subtitle {
+            color: #8b7355;
+        }
+
+        body.livro-mode .theme-toggle-btn {
+            font-family: Georgia, serif;
+            color: #3d2b1f;
+            border-color: #8b7355;
+        }
+
+        body.livro-mode .theme-toggle-btn:hover {
+            background: rgba(139, 115, 85, 0.15);
+            border-color: #3d2b1f;
+        }
+
+        body.livro-mode .header {
+            background: #faf3e0;
+            border-bottom: 1px solid #8b7355;
+        }
+
+        body.livro-mode .section-title {
+            font-family: Georgia, serif;
+            color: #3d2b1f;
+            border-bottom-color: #8b7355;
+        }
+
+        body.livro-mode .narrative {
+            background: #fff8ef;
+            border-left: 3px solid #8b7355;
+            box-shadow: none;
+        }
+
+        body.livro-mode label {
+            font-family: Georgia, serif;
+            color: #3d2b1f;
+        }
+
+        body.livro-mode input,
+        body.livro-mode select,
+        body.livro-mode textarea {
+            background: #ffffff;
+            border-color: #8b7355;
+            color: #3d2b1f;
+            font-family: Georgia, serif;
+        }
+
+        body.livro-mode input:focus,
+        body.livro-mode select:focus,
+        body.livro-mode textarea:focus {
+            border-color: #3d2b1f;
+            box-shadow: 0 0 8px rgba(139, 115, 85, 0.3);
+            background: #fffcf5;
+        }
+
+        body.livro-mode ::placeholder {
+            color: #a09080;
+        }
+
+        body.livro-mode .btn {
+            font-family: Georgia, serif;
+            color: #3d2b1f;
+            border-color: #8b7355;
+            text-shadow: none;
+        }
+
+        body.livro-mode .btn:hover {
+            background: #f0e8d8;
+            box-shadow: 0 2px 10px rgba(139, 115, 85, 0.2);
+            color: #3d2b1f;
+            border-color: #3d2b1f;
+        }
+
+        body.livro-mode .btn:disabled {
+            opacity: 0.4;
+            border-color: #c0b098;
+            color: #c0b098;
+        }
+
+        body.livro-mode .btn-small {
+            font-family: Georgia, serif;
+            color: #3d2b1f;
+            border-color: #8b7355;
+            text-shadow: none;
+        }
+
+        body.livro-mode .btn-small:hover {
+            background: #f0e8d8;
+            color: #3d2b1f;
+            border-color: #3d2b1f;
+        }
+
+        body.livro-mode .option-btn {
+            font-family: Georgia, serif;
+            color: #3d2b1f;
+            border-color: #8b7355;
+        }
+
+        body.livro-mode .option-btn:hover {
+            background: #f0e8d8;
+            border-color: #3d2b1f;
+            box-shadow: 0 2px 8px rgba(139, 115, 85, 0.2);
+            transform: translateX(3px);
+        }
+
+        body.livro-mode .status-bar {
+            background: #fff8ef;
+            border-color: #8b7355;
+            font-family: Georgia, serif;
+        }
+
+        body.livro-mode .round-counter {
+            color: #3d2b1f;
+        }
+
+        body.livro-mode .custom-action input {
+            animation: none;
+            border-right-color: #8b7355;
+        }
+
+        body.livro-mode .advanced-section {
+            border-color: #d0c0a8;
+        }
+
+        body.livro-mode .advanced-section summary {
+            font-family: Georgia, serif;
+            color: #8b7355;
+        }
+
+        body.livro-mode .advanced-section summary:hover {
+            color: #3d2b1f;
+        }
+
+        body.livro-mode .footer {
+            border-top-color: #8b7355;
+            color: #8b7355;
+            background: #faf3e0;
+        }
+
+        body.livro-mode .success-msg {
+            background: #f0e8d8;
+            border-color: #8b7355;
+            color: #3d2b1f;
+        }
+
+        body.livro-mode .download-link {
+            color: #3d2b1f;
+            border-bottom-color: #3d2b1f;
+        }
+
+        body.livro-mode .download-link:hover {
+            color: #000;
+            border-color: #000;
+            text-shadow: none;
+        }
+
+        body.livro-mode .spinner {
+            border-color: #d0c0a8;
+            border-top-color: #8b7355;
+            box-shadow: none;
+        }
+
+        body.livro-mode .loading {
+            color: #3d2b1f;
+        }
+
+        body.livro-mode .custom-action input {
+            border-right: none;
+        }
+
+        body.livro-mode #history-accordion {
+            background: #fff8ef !important;
+            border-color: #8b7355 !important;
+        }
     </style>
 </head>
 <body>
     <div class="book-container">
         <div class="header">
-            <h1>Aventuras Fantásticas</h1>
-            <div class="subtitle">SISTEMA DE AVENTURA IA</div>
+            <h1 id="game-title">Aventuras Fantásticas</h1>
+            <div class="subtitle" id="game-subtitle">SISTEMA DE AVENTURA IA</div>
+            <button id="theme-toggle" class="theme-toggle-btn">Modo Livro</button>
         </div>
+
         <div class="content">
+            <!-- Tela de Setup -->
             <div id="setup-screen">
                 <div class="section">
-                    <h2 class="section-title">Configuração do Sistema</h2>
-                    <div class="form-group">
-                        <label for="llm-type">Modelo de IA</label>
-                        <select id="llm-type">
-                            <option value="ollama">Ollama (Local)</option>
-                            <option value="openai">OpenAI API</option>
-                            <option value="anthropic">Anthropic API</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="llm-model">Modelo Específico</label>
-                        <input type="text" id="llm-model" placeholder="Ex: llama3.2, gpt-4o-mini, claude-sonnet-4-20250514">
-                    </div>
-                    <div class="form-group hidden" id="api-key-group">
-                        <label for="api-key">API Key</label>
-                        <input type="password" id="api-key" placeholder="Sua API key">
-                    </div>
+                    <h2 class="section-title" id="section-title-system">Configuração do Sistema</h2>
+                    
+                    <details id="options-menu" class="advanced-section" open>
+                        <summary id="options-summary">Opções</summary>
+                        
+                        <div class="form-group">
+                            <label for="llm-type">Modelo de IA</label>
+                            <select id="llm-type">
+                                <option value="ollama">Ollama (Local)</option>
+                                <option value="openai">OpenAI API</option>
+                                <option value="anthropic">Anthropic API</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="llm-model">Modelo Específico</label>
+                            <div class="model-select-row">
+                                <select id="llm-model">
+                                    <option value="">Selecione um modelo...</option>
+                                </select>
+                                <button id="load-models-btn" class="btn-small hidden">Carregar Modelos</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group hidden" id="api-key-group">
+                            <label for="api-key">API Key</label>
+                            <input type="password" id="api-key" placeholder="Sua API key">
+                        </div>
+
+                        <details class="advanced-section" style="margin-top:1rem;">
+                            <summary id="advanced-summary">Avançado</summary>
+                            <div class="form-group">
+                                <label for="temperature">Temperature</label>
+                                <input type="number" id="temperature" min="0" max="2" step="0.1" value="0.8">
+                            </div>
+                            <div class="form-group">
+                                <label for="max-tokens">Max Tokens</label>
+                                <input type="number" id="max-tokens" min="64" max="4096" step="64" value="512">
+                            </div>
+                        </details>
+                        
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label for="lang-select" id="lang-label">Idioma / Language</label>
+                            <select id="lang-select">
+                                <option value="pt">🇧🇷 Português</option>
+                                <option value="en">🇺🇸 English</option>
+                            </select>
+                        </div>
+                    </details>
                 </div>
+
                 <div class="section">
-                    <h2 class="section-title">Parâmetros da Aventura</h2>
+                    <h2 class="section-title" id="section-title-params">Parâmetros da Aventura</h2>
+                    
                     <div class="form-group">
                         <label for="narrative-style">Estilo Narrativo</label>
                         <input type="text" id="narrative-style" value="épico e descritivo" placeholder="Ex: épico e descritivo, humorístico, sombrio">
                     </div>
+
                     <div class="form-group">
                         <label for="era">Época</label>
                         <input type="text" id="era" value="fantasia medieval" placeholder="Ex: fantasia medieval, cyberpunk, era vitoriana">
                     </div>
+
                     <div class="form-group">
                         <label for="context">Contexto</label>
                         <textarea id="context" placeholder="Ex: Um reino em guerra contra forças das trevas">Um reino em guerra contra forças das trevas</textarea>
                     </div>
+
                     <div class="form-group">
                         <label for="protagonist">Protagonista</label>
                         <textarea id="protagonist" placeholder="Descreva seu personagem">Um jovem aventureiro em busca de glória e fortuna</textarea>
                     </div>
+
                     <div class="form-group">
                         <label for="characters">Personagens e Criaturas</label>
                         <textarea id="characters" placeholder="Que tipos de personagens e criaturas habitam este mundo?">Magos sábios, guerreiros corajosos, dragões ancestrais e criaturas místicas</textarea>
                     </div>
-                    <button class="btn" onclick="startAdventure()">Iniciar Aventura</button>
+
+                    <div class="form-group">
+                        <label for="total-rounds">Duração da Aventura</label>
+                        <select id="total-rounds">
+                            <option value="8">8 rodadas (aventura curta)</option>
+                            <option value="12">12 rodadas (aventura média)</option>
+                            <option value="20" selected>20 rodadas (aventura épica)</option>
+                            <option value="0">Até o fim (sem limite)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn" id="start-btn" onclick="startAdventure()">Iniciar Aventura</button>
                 </div>
             </div>
+
+            <!-- Tela de Jogo -->
             <div id="game-screen" class="hidden">
                 <div class="status-bar">
-                    <div class="round-counter">RODADA <span id="current-round">1</span>/20</div>
-                    <div>SESSÃO: <span id="session-id">-</span></div>
+                    <div class="round-counter"><span id="round-label">RODADA</span> <span id="current-round">1</span>/20</div>
+                    <div><span id="session-label">SESSÃO:</span> <span id="session-id">-</span></div>
                 </div>
+
+                <button id="history-toggle-btn" class="btn" style="margin-bottom:1rem; width:auto; padding:0.5rem 1rem; font-size:1rem;">📜 Histórico Completo</button>
+                <div id="history-accordion" class="hidden" style="max-height:400px; overflow-y:auto; background:var(--terminal-dark); border:1px solid var(--terminal-green); padding:1rem; margin-bottom:1rem;"></div>
+
                 <div class="section">
                     <div class="narrative" id="narrative-text"></div>
                 </div>
+
                 <div class="section" id="options-section">
-                    <h2 class="section-title">Opções Disponíveis</h2>
+                    <h2 class="section-title" id="options-title">Opções Disponíveis</h2>
                     <div class="options" id="options-container"></div>
+                    
                     <div class="custom-action">
-                        <label for="custom-input">Comando Customizado:</label>
+                        <label for="custom-input" id="custom-cmd-label">Comando Customizado:</label>
                         <input type="text" id="custom-input" placeholder="Digite sua ação...">
-                        <button class="btn mt-2" onclick="submitCustomAction()">Executar Comando</button>
+                        <button class="btn mt-2" id="execute-cmd-btn" onclick="submitCustomAction()">Executar Comando</button>
+                        <button id="end-game-btn" class="btn" style="margin-top:1.5rem; background:rgba(255,100,100,0.08); border-color:#cc5555; color:#cc5555;">Concluir Aventura</button>
                     </div>
                 </div>
+
                 <div class="section hidden" id="final-section">
-                    <h2 class="section-title">Fim da Transmissão</h2>
+                    <h2 class="section-title" id="final-title">Fim da Transmissão</h2>
                     <div id="log-download" class="success-msg"></div>
                 </div>
             </div>
+
+            <!-- Loading -->
             <div id="loading-screen" class="hidden">
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>PROCESSANDO DADOS...</p>
+                    <p id="loading-text">PROCESSANDO DADOS...</p>
                 </div>
             </div>
         </div>
+
         <div class="footer">
             RPG LLM ADVENTURE • TERMINAL v1.0 • 1984
         </div>
     </div>
-    <script src="/app.js"></script>
+
+    <script src="app.js"></script>
 </body>
 </html>
