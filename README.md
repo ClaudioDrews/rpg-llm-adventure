@@ -1,8 +1,8 @@
 # 🎲 RPG LLM Adventure
 
-**Aventuras Fantásticas alimentadas por IA**
+**AI-powered Fighting Fantasy adventures — now bilingual, local-first, and open-source.**
 
-Um jogo de RPG por texto inspirado nos clássicos livros "Aventuras Fantásticas" (Fighting Fantasy), onde você vive uma aventura única gerada por Inteligência Artificial.
+A text-based RPG inspired by the classic *Fighting Fantasy* gamebooks by Ian Livingstone and Steve Jackson. You configure a world, choose your AI narrator, and live a unique adventure generated in real time. No two playthroughs are ever the same.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
@@ -10,334 +10,193 @@ Um jogo de RPG por texto inspirado nos clássicos livros "Aventuras Fantásticas
 
 ---
 
-## ✨ Características
+## Why this exists
 
-- 🤖 **Múltiplos LLMs**: Suporte para Ollama (local), OpenAI e Anthropic
-- 📱 **Interface Responsiva**: Jogue no PC ou celular
-- 🎨 **Design Único**: Interface inspirada em livros antigos de RPG
-- 🖥️ **CLI e Web**: Terminal minimalista ou navegador com design completo
-- 📝 **Log Automático**: Toda aventura é salva em arquivo de texto
-- ⚔️ **20 Rodadas**: História completa com início, meio e fim
-- 🎯 **Customizável**: Defina estilo, época, contexto e personagens
-- 🌐 **Acesso em Rede**: Jogue do celular conectado na mesma WiFi
+Most AI RPG tools lock you into a single provider's API. You pay per token. You lose control when the service goes down. And the English-only interfaces ignore entire communities of players.
 
----
+RPG LLM Adventure is different:
 
-## 📋 Requisitos
-
-### Sistema
-- Python 3.10 ou superior
-- Ollama instalado (para uso local) OU API key (OpenAI/Anthropic)
-
-### Hardware Testado
-- **CPU**: Intel Core i7-12700H (funciona em configs inferiores)
-- **RAM**: 4GB+ (8GB recomendado para Ollama)
-- **OS**: Linux (testado no Linux Mint 22.3)
+| | Typical AI RPG | This project |
+|---|---|---|
+| **Models** | Locked to one API | Ollama (local), OpenAI, Anthropic — swap anytime |
+| **Language** | English only | Portuguese + English, auto-detects your browser |
+| **Cost** | Pay-per-token | Ollama mode is **completely free** |
+| **Privacy** | Stories sent to cloud | Local mode keeps everything on your machine |
+| **Interface** | Single theme | Terminal CRT mode + Book Mode (parchment) |
+| **Rounds** | Fixed length | 8, 12, 20, or unlimited |
 
 ---
 
-## 🚀 Instalação Rápida
+## ✨ Features
 
-### 1. Clone/Baixe o Projeto
+- 🤖 **Multiple backends** — Ollama (local), OpenAI, Anthropic. Mix and match.
+- 🌐 **Bilingual** — Portuguese and English UI, with browser language detection.
+- 📱 **Responsive** — Play on desktop or phone. Same WiFi = instant access.
+- 🎨 **Two themes** — CRT terminal (green-on-black) or Book Mode (parchment).
+- ⚙️ **Configurable** — Rounds (8/12/20/unlimited), temperature, max tokens, narrative style.
+- 📝 **Markdown logs** — Every adventure saved with YAML frontmatter. Readable anywhere.
+- ⌨️ **Keyboard shortcuts** — Press `1`, `2`, `3` to choose. Custom actions for anything else.
+- 🔒 **Local-first** — Ollama mode needs no internet, no account, no API key.
+
+---
+
+## 📋 Requirements
+
+- Python 3.10+
+- Ollama (optional, for local/free mode)
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-cd ~/Projects  # ou onde preferir
-# (extraia o arquivo zip aqui)
+# Clone
+git clone https://github.com/ClaudioDrews/rpg-llm-adventure.git
 cd rpg-llm-adventure
-```
 
-### 2. Crie Ambiente Virtual
-
-```bash
+# Setup
 python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou
-venv\Scripts\activate  # Windows
-```
-
-### 3. Instale Dependências
-
-```bash
+source venv/bin/activate
 pip install -r requirements.txt
-```
 
-### 4. Configure Ollama (Opcional - para uso local)
-
-```bash
-# Se ainda não tiver instalado
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Inicie o serviço
+# Start (with Ollama)
 ollama serve &
-
-# Baixe um modelo (recomendado: llama3.2)
 ollama pull llama3.2
 
-# Ou um modelo maior para melhor qualidade
-ollama pull llama3.1
+# Run
+cd backend && python main.py
+# → Open http://localhost:8000
 ```
 
 ---
 
-## 🎮 Como Jogar
+## 🤖 Model Recommendations
 
-### Opção 1: Interface Web (Recomendado)
+### Local & Free (Ollama)
 
-```bash
-cd backend
-python main.py
-```
+| Model | Quality | Speed | Best for |
+|-------|---------|-------|----------|
+| `llama3.2` (3B) | Good | Fast | Quick games, low-RAM machines |
+| `dolphin3.0` (8B) | Better | Moderate | Creative, uncensored storytelling |
+| `llama3.1` (8B) | Very good | Moderate | Balanced quality and speed |
 
-Você verá algo como:
+### Open-Source APIs
 
-```
-============================================================
-🎲 RPG LLM ADVENTURE - Servidor Iniciado
-============================================================
+| Provider | Model | Notes |
+|----------|-------|-------|
+| **DeepSeek** | `deepseek-chat` (V3) | Excellent narrative quality at a fraction of proprietary API cost |
+| **Moonshot/Kimi** | `kimi-k2.5` | Strong instruction following, great for complex story arcs |
+| **Zhipu/GLM** | `glm-5` | Solid performance, good fallback option |
 
-📱 Acesso Local: http://localhost:8000
-🌐 Acesso na Rede: http://192.168.1.100:8000
+> **Recommended stack:** Ollama for free local play + DeepSeek API for cloud quality without vendor lock-in.
 
-💡 Para acessar do celular:
-   1. Conecte o celular na mesma rede WiFi
-   2. Abra o navegador e acesse: http://192.168.1.100:8000
+### Proprietary APIs
 
-============================================================
-```
-
-**Agora:**
-1. Abra seu navegador em `http://localhost:8000`
-2. Ou acesse do celular usando o IP mostrado
-3. Configure sua aventura
-4. Divirta-se! 🎉
-
-### Opção 2: Terminal (CLI)
-
-```bash
-cd cli
-chmod +x rpg_cli.py
-python rpg_cli.py
-```
-
-Interface minimalista perfeita para terminais.
+| Provider | Model | Notes |
+|----------|-------|-------|
+| OpenAI | `gpt-4o-mini` | Cheap, good enough |
+| OpenAI | `gpt-4o` | Best quality, higher cost |
+| Anthropic | `claude-sonnet-4` | Excellent narrative, creative style |
 
 ---
 
-## ⚙️ Configuração
+## 🎮 How to Play
 
-### Usando Ollama (Local - Grátis)
+### Web Interface
 
-1. **LLM Type**: Ollama
-2. **Model**: `llama3.2` (ou outro instalado)
-3. **API Key**: (deixe em branco)
+1. Start the server: `cd backend && python main.py`
+2. Open `http://localhost:8000` (or the network IP shown in the console)
+3. Configure your world — era, context, protagonist, characters
+4. Click **Start Adventure** and begin your journey
 
-### Usando OpenAI API
+### During the game
 
-1. **LLM Type**: OpenAI API
-2. **Model**: `gpt-4o-mini` (econômico) ou `gpt-4o` (melhor)
-3. **API Key**: Sua chave da OpenAI
+- **1/2/3 keys** — Choose one of three pre-generated options
+- **Custom input** — Type any action you can imagine
+- **Full History** — Expand the accordion to see all past rounds
+- **End Adventure** — Conclude the story at any round
+- **Theme toggle** — Switch between Terminal and Book mode in the top-right corner
 
-### Usando Anthropic API
+### Mobile
 
-1. **LLM Type**: Anthropic API
-2. **Model**: `claude-sonnet-4-20250514`
-3. **API Key**: Sua chave da Anthropic
-
-### Personalize Sua Aventura
-
-- **Estilo Narrativo**: épico, humorístico, sombrio, romântico...
-- **Época**: medieval, cyberpunk, era vitoriana, pós-apocalíptico...
-- **Contexto**: reino em guerra, investigação de mistério, exploração espacial...
-- **Protagonista**: descreva seu personagem!
-- **Personagens**: magos, aliens, detectives, robôs...
+Connect your phone to the same WiFi as the server. Open the IP shown in the console (e.g. `http://192.168.8.30:8000`). The interface is fully responsive.
 
 ---
 
-## 📱 Jogando no Celular
-
-### Conectar na Mesma Rede
-
-1. Certifique-se de que PC e celular estão na mesma WiFi
-2. Inicie o servidor (veja IP exibido no console)
-3. No celular, abra o navegador
-4. Acesse: `http://192.168.1.XXX:8000` (use o IP correto)
-
-### Dicas
-- Interface 100% responsiva
-- Funciona offline (se usar Ollama)
-- Salve o link como favorito no celular
-
----
-
-## 📂 Estrutura do Projeto
+## 📂 Project Structure
 
 ```
 rpg-llm-adventure/
-├── backend/              # Servidor FastAPI
-│   ├── main.py          # API e servidor web
-│   ├── llm_manager.py   # Gerenciador de LLMs
-│   └── game_state.py    # Estado do jogo
-├── frontend/            # Interface web
-│   ├── index.html       # HTML + CSS
-│   └── app.js           # JavaScript
-├── cli/                 # Interface terminal
-│   └── rpg_cli.py       # CLI completa
-├── logs/                # Logs das aventuras (auto-criado)
-├── requirements.txt     # Dependências Python
-└── README.md           # Este arquivo
+├── backend/
+│   ├── main.py          # FastAPI server + all endpoints
+│   ├── llm_manager.py   # LLM provider abstraction
+│   └── game_state.py    # Game state data model
+├── frontend/
+│   ├── index.html       # Full UI (HTML + CSS)
+│   └── app.js           # Frontend logic (vanilla JS)
+├── cli/
+│   └── rpg_cli.py       # Terminal interface
+├── logs/                # Adventure logs (Markdown + YAML frontmatter)
+├── requirements.txt
+├── start.sh
+└── CHANGELOG.md
 ```
 
 ---
 
-## 🎯 Mecânicas do Jogo
+## ⚙️ Configuration
 
-### Fluxo de Jogo
+### Provider Setup
 
-1. **Configuração**: Escolha LLM e defina sua aventura
-2. **Rodada 1-19**: 
-   - Leia a narrativa
-   - Escolha entre 3 opções OU crie sua própria ação
-   - A IA continua a história
-3. **Rodada 20**: Conclusão épica da aventura
-4. **Fim**: Baixe o log completo da história
+Use the **Options** menu on the start screen to select your LLM provider and model. The "Load Models" button discovers available Ollama models automatically.
 
-### Opções de Ação
+### Adventure Parameters
 
-- **Opções 1-3**: Escolhas pré-definidas pela IA
-- **Ação Customizada**: Escreva o que quiser fazer!
-- **Atalhos** (web): Pressione `1`, `2` ou `3` no teclado
+- **Narrative Style** — epic, humorous, dark, romantic...
+- **Era** — medieval fantasy, cyberpunk, post-apocalyptic, space exploration...
+- **Duration** — 8, 12, 20 rounds, or "Until the end" (no limit)
+- **Advanced** — temperature (creativity) and max tokens (response length)
 
 ---
 
-## 📝 Logs das Aventuras
+## 🐛 Troubleshooting
 
-Cada aventura completa gera um arquivo `.txt` em `logs/` com:
-
-- Configuração completa da aventura
-- Todas as 20 rodadas
-- Suas escolhas e ações
-- Narrativa completa
-- Timestamp
-
-**Exemplo**: `logs/aventura_20250207_143022.txt`
-
----
-
-## 🐛 Solução de Problemas
-
-### Erro: "Não foi possível conectar ao Ollama"
+### "Could not connect to Ollama"
 
 ```bash
-# Verifique se Ollama está rodando
-ollama serve
-
-# Em outro terminal, teste
-ollama list
+ollama serve                    # Start the service
+ollama list                     # Verify models are available
 ```
 
-### Erro: "API key inválida"
-
-- Verifique se copiou a chave corretamente
-- OpenAI: Deve começar com `sk-`
-- Anthropic: Formato diferente
-
-### Erro: "Porta 8000 já em uso"
+### "Port 8000 already in use"
 
 ```bash
-# Mate o processo usando a porta
 sudo lsof -ti:8000 | xargs kill -9
-
-# Ou use outra porta editando main.py (linha final)
 ```
 
-### Interface não carrega no celular
+### Mobile can't connect
 
-1. Verifique se ambos estão na mesma WiFi
-2. Desative firewall temporariamente
-3. Use o IP correto (192.168.x.x, não 127.0.0.1)
-
----
-
-## 💡 Dicas e Truques
-
-### Para Melhor Qualidade de História
-
-- Use modelos maiores (llama3.1, gpt-4o, claude-opus)
-- Seja específico na configuração
-- Descreva bem seu protagonista
-- Experimente estilos narrativos diferentes
-
-### Performance
-
-- **Ollama**: Modelos 7B são rápidos, 70B+ são mais lentos mas melhores
-- **APIs**: Geralmente mais rápidas, mas custam dinheiro
-- **RAM**: 8GB+ recomendado para modelos locais grandes
-
-### Criatividade
-
-- Tente ações customizadas inusitadas!
-- Misture gêneros (fantasia + sci-fi)
-- Crie protagonistas únicos
-- Quebre a quarta parede (às vezes funciona!)
+1. Confirm phone and server are on the same WiFi
+2. Use the IP shown in the console (not `localhost`)
+3. Temporarily disable firewall if blocked
 
 ---
 
-## 🔧 Customização Avançada
+## 🤝 Contributing
 
-### Alterar Número de Rodadas
+Bug reports, feature suggestions, and pull requests are welcome.
 
-Em `backend/main.py`, procure por `20` e altere para o desejado.
-
-### Mudar Temperatura da IA
-
-Em `backend/llm_manager.py`, altere `temperature: 0.8` para:
-- `0.5-0.7`: Mais conservador, consistente
-- `0.8-1.0`: Mais criativo, surpreendente
-
-### Adicionar Novo LLM
-
-Edite `llm_manager.py` e adicione método `_generate_novo_llm()`.
+Areas where you can help:
+- **New LLM providers** — add a `_generate_<provider>()` method to `llm_manager.py`
+- **Visual themes** — add CSS classes for new color schemes
+- **Translations** — add entries to the `I18N` dictionary in `app.js`
 
 ---
 
-## 📚 Recursos Adicionais
+## 📄 License
 
-- [Documentação Ollama](https://ollama.com/docs)
-- [API OpenAI](https://platform.openai.com/docs)
-- [API Anthropic](https://docs.anthropic.com)
-- [FastAPI Docs](https://fastapi.tiangolo.com)
+MIT — use, modify, and distribute freely.
 
 ---
 
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Sinta-se livre para:
-
-- Reportar bugs
-- Sugerir features
-- Melhorar a documentação
-- Adicionar novos LLMs
-- Criar temas visuais
-
----
-
-## 📄 Licença
-
-MIT License - Use, modifique e distribua livremente!
-
----
-
-## 🙏 Agradecimentos
-
-- **Fighting Fantasy** - Ian Livingstone & Steve Jackson
-- **Ollama** - LLMs locais incríveis
-- **FastAPI** - Framework web moderno
-- **Comunidade Open Source** ❤️
-
----
-
-## 🎲 Que a Aventura Comece!
-
-Criado com 💜 por entusiastas de RPG e IA.
-
-**Boa sorte, aventureiro!** ⚔️🐉✨
+*"Sua decisão pode mudar tudo." — "Your decision can change everything."*
