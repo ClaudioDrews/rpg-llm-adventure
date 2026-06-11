@@ -8,8 +8,8 @@ const I18N = {
         subtitle: 'SISTEMA DE AVENTURA IA',
         systemConfig: 'Configuração do Sistema',
         adventureParams: 'Parâmetros da Aventura',
-        aiModel: 'Modelo de IA',
-        specificModel: 'Modelo Específico',
+        inferenceProvider: 'Provedor de Inferência',
+        modelSelect: 'Selecionar Modelo',
         apiKey: 'API Key',
         narrativeStyle: 'Estilo Narrativo',
         era: 'Época',
@@ -68,8 +68,8 @@ const I18N = {
         subtitle: 'AI ADVENTURE SYSTEM',
         systemConfig: 'System Configuration',
         adventureParams: 'Adventure Parameters',
-        aiModel: 'AI Model',
-        specificModel: 'Specific Model',
+        inferenceProvider: 'Inference Provider',
+        modelSelect: 'Select Model',
         apiKey: 'API Key',
         narrativeStyle: 'Narrative Style',
         era: 'Era',
@@ -205,9 +205,8 @@ document.getElementById('llm-type').addEventListener('change', (e) => {
     // Mostrar/ocultar API key
     if (llmType === 'ollama') {
         apiKeyGroup.classList.add('hidden');
-        loadModelsBtn.classList.remove('hidden');
-        const select = document.getElementById('llm-model');
-        select.innerHTML = '<option value="">' + t('clickLoadModels') + '</option>';
+        loadModelsBtn.classList.add('hidden');
+        fetchOllamaModels();  // Auto-carregar modelos
     } else {
         apiKeyGroup.classList.remove('hidden');
         loadModelsBtn.classList.add('hidden');
@@ -265,7 +264,7 @@ async function startAdventure() {
         protagonist: document.getElementById('protagonist').value,
         characters: document.getElementById('characters').value,
         temperature: parseFloat(document.getElementById('temperature').value) || 0.8,
-        max_tokens: parseInt(document.getElementById('max-tokens').value) || 512,
+        max_tokens: parseInt(document.getElementById('max-tokens').value) || null,
         total_rounds: parseInt(document.getElementById('total-rounds').value) || 20,
         lang: currentLang
     };
@@ -609,8 +608,8 @@ function renderUI() {
 
     // Labels by for attribute mapping
     const labelMap = {
-        'llm-type': 'aiModel',
-        'llm-model': 'specificModel',
+        'llm-type': 'inferenceProvider',
+        'llm-model': 'modelSelect',
         'api-key': 'apiKey',
         'temperature': 'temperature',
         'max-tokens': 'maxTokens',
@@ -709,6 +708,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme
     restoreTheme();
 
+    // Título clicável → volta ao início
+    const gameTitle = document.getElementById('game-title');
+    if (gameTitle) {
+        gameTitle.addEventListener('click', goHome);
+    }
+
     const themeBtn = document.getElementById('theme-toggle');
     if (themeBtn) {
         themeBtn.addEventListener('click', toggleTheme);
@@ -738,15 +743,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Voltar ao Setup
-    const backBtn = document.getElementById('back-to-setup-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            gameState.isPlaying = false;
-            gameState.sessionId = null;
-            gameState.history = [];
-            showScreen('setup-screen');
-        });
-    }
+function goHome() {
+    gameState.isPlaying = false;
+    gameState.sessionId = null;
+    gameState.history = [];
+    showScreen('setup-screen');
+}
+
+// Voltar ao Setup
+const backBtn = document.getElementById('back-to-setup-btn');
+if (backBtn) {
+    backBtn.addEventListener('click', goHome);
+}
 });
 
 // Atalhos de teclado

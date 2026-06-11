@@ -681,7 +681,7 @@
 <body>
     <div class="book-container">
         <div class="header">
-            <h1 id="game-title">Aventuras Fantásticas</h1>
+            <h1 id="game-title" style="cursor:pointer;" title="Voltar ao início">Aventuras Fantásticas</h1>
             <div class="subtitle" id="game-subtitle">SISTEMA DE AVENTURA IA</div>
             <button id="theme-toggle" class="theme-toggle-btn">Modo Livro</button>
         </div>
@@ -696,7 +696,7 @@
                         <summary id="options-summary">Opções</summary>
                         
                         <div class="form-group">
-                            <label for="llm-type">Modelo de IA</label>
+                            <label for="llm-type">Provedor de Inferência</label>
                             <select id="llm-type">
                                 <option value="ollama">Ollama (Local)</option>
                                 <option value="openai">OpenAI API</option>
@@ -705,7 +705,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="llm-model">Modelo Específico</label>
+                            <label for="llm-model">Selecionar Modelo</label>
                             <div class="model-select-row">
                                 <select id="llm-model">
                                     <option value="">Selecione um modelo...</option>
@@ -727,7 +727,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="max-tokens">Max Tokens</label>
-                                <input type="number" id="max-tokens" min="64" max="4096" step="64" value="512">
+                                <input type="number" id="max-tokens" min="64" max="4096" step="64" placeholder="Usar default do modelo">
                             </div>
                         </details>
                         
@@ -816,6 +816,7 @@
                 <div class="section hidden" id="final-section">
                     <h2 class="section-title" id="final-title">Fim da Transmissão</h2>
                     <div id="log-download" class="success-msg"></div>
+                    <button class="btn mt-2" onclick="goHome()">↩ Nova Aventura</button>
                 </div>
             </div>
 

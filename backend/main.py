@@ -97,7 +97,7 @@ class GameSetup(BaseModel):
     protagonist: str = "um jovem aventureiro"
     characters: str = "magos, guerreiros e criaturas místicas"
     temperature: Optional[float] = 0.8
-    max_tokens: Optional[int] = 512
+    max_tokens: Optional[int] = None
     total_rounds: int = 20
     lang: str = 'pt'
 
@@ -148,7 +148,7 @@ async def start_game(setup: GameSetup) -> GameResponse:
             model=setup.llm_model,
             api_key=setup.api_key,
             temperature=setup.temperature or 0.8,
-            max_tokens=setup.max_tokens or 512
+            max_tokens=setup.max_tokens
         )
         
         session_id = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"

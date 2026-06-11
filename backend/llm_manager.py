@@ -27,7 +27,7 @@ class LLMManager:
         model: str,
         api_key: Optional[str] = None,
         temperature: float = 0.8,
-        max_tokens: int = 512
+        max_tokens: Optional[int] = None
     ):
         self.llm_type = llm_type
         self.model = model
@@ -58,17 +58,17 @@ class LLMManager:
         timeout = TIMEOUTS.get("ollama", DEFAULT_TIMEOUT)
         async with httpx.AsyncClient(timeout=timeout) as client:
             try:
+                payload = {
+                    "model": self.model,
+                    "prompt": prompt,
+                    "stream": False,
+                    "options": {"temperature": self.temperature}
+                }
+                if self.max_tokens is not None:
+                    payload["options"]["num_predict"] = self.max_tokens
                 response = await client.post(
                     f"{self.ollama_url}/api/generate",
-                    json={
-                        "model": self.model,
-                        "prompt": prompt,
-                        "stream": False,
-                        "options": {
-                            "num_predict": max_tokens,
-                            "temperature": self.temperature,
-                        }
-                    }
+                    json=payload
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -86,20 +86,20 @@ class LLMManager:
         timeout = TIMEOUTS.get("openai", DEFAULT_TIMEOUT)
         async with httpx.AsyncClient(timeout=timeout) as client:
             try:
+                payload = {
+                    "model": self.model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": self.temperature
+                }
+                if self.max_tokens is not None:
+                    payload["max_tokens"] = self.max_tokens
                 response = await client.post(
                     "https://api.openai.com/v1/chat/completions",
                     headers={
                         "Authorization": f"Bearer {self.api_key}",
                         "Content-Type": "application/json"
                     },
-                    json={
-                        "model": self.model,
-                        "messages": [
-                            {"role": "user", "content": prompt}
-                        ],
-                        "max_tokens": max_tokens,
-                        "temperature": self.temperature
-                    }
+                    json=payload
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -116,6 +116,13 @@ class LLMManager:
         timeout = TIMEOUTS.get("anthropic", DEFAULT_TIMEOUT)
         async with httpx.AsyncClient(timeout=timeout) as client:
             try:
+                payload = {
+                    "model": self.model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": self.temperature
+                }
+                if self.max_tokens is not None:
+                    payload["max_tokens"] = self.max_tokens
                 response = await client.post(
                     "https://api.anthropic.com/v1/messages",
                     headers={
@@ -123,14 +130,7 @@ class LLMManager:
                         "anthropic-version": "2023-06-01",
                         "Content-Type": "application/json"
                     },
-                    json={
-                        "model": self.model,
-                        "messages": [
-                            {"role": "user", "content": prompt}
-                        ],
-                        "max_tokens": max_tokens,
-                        "temperature": self.temperature
-                    }
+                    json=payload
                 )
                 response.raise_for_status()
                 data = response.json()
