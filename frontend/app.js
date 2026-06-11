@@ -148,6 +148,7 @@ function setLanguage(lang) {
 let gameState = {
     sessionId: null,
     currentRound: 0,
+    totalRounds: 20,
     isPlaying: false,
     isSubmitting: false,
     history: []
@@ -300,6 +301,7 @@ async function startAdventure() {
         // Atualizar estado
         gameState.sessionId = data.session_id;
         gameState.currentRound = data.round;
+        gameState.totalRounds = setup.total_rounds;
         gameState.isPlaying = true;
 
         // Mostrar primeira rodada
@@ -317,6 +319,8 @@ async function startAdventure() {
 function displayRound(data) {
     // Atualizar contador
     document.getElementById('current-round').textContent = data.round;
+    const roundsDisplay = gameState.totalRounds > 0 ? gameState.totalRounds : '∞';
+    document.getElementById('total-rounds-display').textContent = roundsDisplay;
     document.getElementById('session-id').textContent = data.session_id.substring(0, 8);
 
     // Exibir narrativa
@@ -731,6 +735,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const endGameBtn = document.getElementById('end-game-btn');
     if (endGameBtn) {
         endGameBtn.addEventListener('click', endAdventure);
+    }
+
+    // Voltar ao Setup
+    const backBtn = document.getElementById('back-to-setup-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            gameState.isPlaying = false;
+            gameState.sessionId = null;
+            gameState.history = [];
+            showScreen('setup-screen');
+        });
     }
 });
 

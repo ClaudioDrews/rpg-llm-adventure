@@ -786,11 +786,15 @@
             <!-- Tela de Jogo -->
             <div id="game-screen" class="hidden">
                 <div class="status-bar">
-                    <div class="round-counter"><span id="round-label">RODADA</span> <span id="current-round">1</span>/20</div>
+                    <div class="round-counter"><span id="round-label">RODADA</span> <span id="current-round">1</span>/<span id="total-rounds-display">20</span></div>
                     <div><span id="session-label">SESSÃO:</span> <span id="session-id">-</span></div>
                 </div>
 
-                <button id="history-toggle-btn" class="btn" style="margin-bottom:1rem; width:auto; padding:0.5rem 1rem; font-size:1rem;">📜 Histórico Completo</button>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                    <button id="history-toggle-btn" class="btn-small">📜 Histórico</button>
+                    <button id="back-to-setup-btn" class="btn-small" style="border-color:#888;color:#888;">↩ Setup</button>
+                    <span style="font-size:0.85rem; color:var(--terminal-dim); align-self:center; margin-left:auto;">Teclas: 1·2·3 ou Enter</span>
+                </div>
                 <div id="history-accordion" class="hidden" style="max-height:400px; overflow-y:auto; background:var(--terminal-dark); border:1px solid var(--terminal-green); padding:1rem; margin-bottom:1rem;"></div>
 
                 <div class="section">
@@ -803,7 +807,7 @@
                     
                     <div class="custom-action">
                         <label for="custom-input" id="custom-cmd-label">Comando Customizado:</label>
-                        <input type="text" id="custom-input" placeholder="Digite sua ação...">
+                        <textarea id="custom-input" rows="4" placeholder="Digite sua ação..."></textarea>
                         <button class="btn mt-2" id="execute-cmd-btn" onclick="submitCustomAction()">Executar Comando</button>
                         <button id="end-game-btn" class="btn" style="margin-top:1.5rem; background:rgba(255,100,100,0.08); border-color:#cc5555; color:#cc5555;">Concluir Aventura</button>
                     </div>

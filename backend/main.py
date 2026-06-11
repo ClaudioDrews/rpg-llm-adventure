@@ -110,7 +110,7 @@ class GameSetup(BaseModel):
 
 class PlayerAction(BaseModel):
     session_id: str
-    action: str  # "1", "2", "3" ou texto customizado
+    action: Optional[str] = None  # "1", "2", "3", texto customizado, ou None (end_game)
 
 class GameResponse(BaseModel):
     session_id: str
