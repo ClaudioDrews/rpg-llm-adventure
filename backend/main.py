@@ -126,7 +126,10 @@ class GameResponse(BaseModel):
 @app.get("/")
 async def root():
     """Serve o frontend"""
-    return FileResponse(str(FRONTEND_DIR / "index.html"))
+    return FileResponse(
+        str(FRONTEND_DIR / "index.html"),
+        headers={"Cache-Control": "no-cache"}
+    )
 
 @app.post("/api/game/start")
 async def start_game(setup: GameSetup) -> GameResponse:
@@ -539,7 +542,10 @@ async def list_ollama_models():
 
 @app.get("/app.js")
 async def serve_js():
-    return FileResponse(str(FRONTEND_DIR / "app.js"))
+    return FileResponse(
+        str(FRONTEND_DIR / "app.js"),
+        headers={"Cache-Control": "no-cache"}
+    )
 
 @app.get("/favicon.ico")
 async def favicon():

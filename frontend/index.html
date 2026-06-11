@@ -363,6 +363,19 @@
             margin-left: 0.5rem;
         }
 
+        .option-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            border: 1px solid var(--terminal-green);
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
         /* Cursor piscante para inputs */
         .custom-action input {
             border-right: 8px solid var(--terminal-green);
@@ -792,8 +805,8 @@
 
                 <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
                     <button id="history-toggle-btn" class="btn-small">📜 Histórico</button>
-                    <button id="back-to-setup-btn" class="btn-small" style="border-color:#888;color:#888;">↩ Setup</button>
-                    <span style="font-size:0.85rem; color:var(--terminal-dim); align-self:center; margin-left:auto;">Teclas: 1·2·3 ou Enter</span>
+                    <button id="back-to-setup-btn" class="btn-small" style="border-color:#888;color:#888;"><span id="back-home-label">↩ Página Inicial</span></button>
+                    <span id="keyboard-hint" style="font-size:0.85rem; color:var(--terminal-dim); align-self:center; margin-left:auto;">Toque nos botões ou use teclas 1·2·3</span>
                 </div>
                 <div id="history-accordion" class="hidden" style="max-height:400px; overflow-y:auto; background:var(--terminal-dark); border:1px solid var(--terminal-green); padding:1rem; margin-bottom:1rem;"></div>
 
@@ -816,7 +829,7 @@
                 <div class="section hidden" id="final-section">
                     <h2 class="section-title" id="final-title">Fim da Transmissão</h2>
                     <div id="log-download" class="success-msg"></div>
-                    <button class="btn mt-2" onclick="goHome()">↩ Nova Aventura</button>
+                    <button class="btn mt-2" onclick="goHome()"><span id="new-adventure-label">↩ Nova Aventura</span></button>
                 </div>
             </div>
 

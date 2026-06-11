@@ -62,6 +62,9 @@ const I18N = {
         waiting: 'aguardando',
         apiKeyPlaceholder: 'Sua API key',
         customPlaceholder: 'Digite sua ação...',
+        backToHome: '↩ Página Inicial',
+        newAdventure: '↩ Nova Aventura',
+        keyboardHint: 'Toque nos botões ou use teclas 1·2·3',
     },
     en: {
         pageTitle: 'Fantastic Adventures',
@@ -122,6 +125,9 @@ const I18N = {
         waiting: 'pending',
         apiKeyPlaceholder: 'Your API key',
         customPlaceholder: 'Type your action...',
+        backToHome: '↩ Home',
+        newAdventure: '↩ New Adventure',
+        keyboardHint: 'Tap buttons or use keys 1·2·3',
     }
 };
 
@@ -364,10 +370,15 @@ function displayOptions(options) {
         btn.setAttribute('data-number', index + 1);
         btn.onclick = () => selectOption(index + 1);
         
+        const badge = document.createElement('span');
+        badge.className = 'option-badge';
+        badge.textContent = (index + 1).toString();
+
         const textDiv = document.createElement('div');
         textDiv.className = 'option-text';
         textDiv.textContent = option;
         
+        btn.appendChild(badge);
         btn.appendChild(textDiv);
         container.appendChild(btn);
     });
@@ -686,7 +697,25 @@ function renderUI() {
     if (apiKeyInput) apiKeyInput.placeholder = t('apiKeyPlaceholder');
     const customInput = document.getElementById('custom-input');
     if (customInput) customInput.placeholder = t('customPlaceholder');
+
+    // Game-screen navigation labels
+    const backHomeLabel = document.getElementById('back-home-label');
+    if (backHomeLabel) backHomeLabel.textContent = t('backToHome');
+    const newAdventureLabel = document.getElementById('new-adventure-label');
+    if (newAdventureLabel) newAdventureLabel.textContent = t('newAdventure');
+    const keyboardHint = document.getElementById('keyboard-hint');
+    if (keyboardHint) keyboardHint.textContent = t('keyboardHint');
 }
+
+// ===== NAVEGAÇÃO GLOBAL =====
+
+function goHome() {
+    gameState.isPlaying = false;
+    gameState.sessionId = null;
+    gameState.history = [];
+    showScreen('setup-screen');
+}
+window.goHome = goHome;
 
 // ===== EVENT LISTENERS =====
 
@@ -743,15 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Voltar ao Setup
-function goHome() {
-    gameState.isPlaying = false;
-    gameState.sessionId = null;
-    gameState.history = [];
-    showScreen('setup-screen');
-}
-
-// Voltar ao Setup
-const backBtn = document.getElementById('back-to-setup-btn');
+    const backBtn = document.getElementById('back-to-setup-btn');
 if (backBtn) {
     backBtn.addEventListener('click', goHome);
 }
