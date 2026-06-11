@@ -148,7 +148,7 @@ Formato de resposta:
             print(f"\n✓ Ação customizada: {chosen_action}")
         self.game_state.rounds[-1]["player_action"] = chosen_action
         next_round = current_round + 1
-        is_final = (next_round == 20)
+        is_final = (self.game_state.total_rounds > 0 and next_round > self.game_state.total_rounds)
         print("\n⏳ Gerando continuação...\n")
         if is_final:
             prompt = self._create_final_prompt(chosen_action)
@@ -166,7 +166,9 @@ Formato de resposta:
         return is_final
     
     def _display_round(self, narrative: str, options: list, round_num: int, is_final: bool = False):
-        self.print_header(f"{'FIM DA' if is_final else ''} AVENTURA - RODADA {round_num}/20")
+        total = self.game_state.total_rounds
+        rounds_str = f"{total}" if total > 0 else "∞"
+        self.print_header(f"{'FIM DA' if is_final else ''} AVENTURA - RODADA {round_num}/{rounds_str}")
         self.print_wrapped(narrative)
         if options:
             self.print_section("OPÇÕES")
@@ -174,10 +176,12 @@ Formato de resposta:
                 print(f"{i}. {option}")
     
     def _create_continuation_prompt(self, action: str, round_num: int) -> str:
+        total = self.game_state.total_rounds
+        rounds_str = f"{total}" if total > 0 else "∞"
         history = format_history(self.game_state.rounds[-2:])
         return f"""Continue a aventura de RPG (estilo Fighting Fantasy).
 
-RODADA {round_num}/20
+RODADA {round_num}/{rounds_str}
 
 Contexto recente:
 {history}
@@ -199,10 +203,12 @@ Formato de resposta:
 3. (terceira opção)"""
     
     def _create_final_prompt(self, action: str) -> str:
+        total = self.game_state.total_rounds
+        rounds_str = f"{total}" if total > 0 else "∞"
         history = format_history(self.game_state.rounds[-3:])
         return f"""Continue a aventura de RPG (estilo Fighting Fantasy).
 
-RODADA FINAL (20/20) - CONCLUSÃO DA HISTÓRIA
+RODADA FINAL ({rounds_str}/{rounds_str}) - CONCLUSÃO DA HISTÓRIA
 
 Contexto da história:
 {history}
@@ -246,8 +252,10 @@ Formato de resposta:
             f.write("A AVENTURA\n")
             f.write("=" * 80 + "\n\n")
             for i, round_data in enumerate(self.game_state.rounds, 1):
+                total = self.game_state.total_rounds
+                rounds_str = f"{total}" if total > 0 else "∞"
                 f.write(f"\n{'=' * 80}\n")
-                f.write(f"RODADA {i}/20\n")
+                f.write(f"RODADA {i}/{rounds_str}\n")
                 f.write(f"{'=' * 80}\n\n")
                 f.write(round_data['narrative'])
                 f.write("\n\n")
@@ -269,10 +277,12 @@ async def main():
     try:
         await ui.setup_game()
         await ui.start_adventure()
-        while ui.game_state.current_round < 20:
+        while True:
             is_final = await ui.play_round()
             if is_final:
                 break
+            # Free mode (total_rounds <= 0) never ends by round count;
+            # sanity limit em GameState.add_round() bloqueia em 100 rodadas
         ui.print_section("SALVANDO AVENTURA")
         log_path = ui.save_log()
         print(f"✅ Log salvo em: {log_path}")

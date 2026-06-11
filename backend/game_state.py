@@ -43,7 +43,7 @@ class GameState:
         player_action: Optional[str] = None
     ):
         """Adiciona uma nova rodada ao histórico."""
-        if self.total_rounds == 0 and self.current_round >= MAX_ROUNDS_FREE_MODE:
+        if self.total_rounds <= 0 and self.current_round >= MAX_ROUNDS_FREE_MODE:
             raise ValueError(
                 f"Limite de segurança do modo livre atingido "
                 f"({MAX_ROUNDS_FREE_MODE} rodadas)"

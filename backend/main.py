@@ -239,10 +239,10 @@ Formato de resposta:
 async def process_action(action: PlayerAction) -> GameResponse:
     """Processa uma ação do jogador"""
     try:
-        if action.session_id not in game_store:
-            raise HTTPException(status_code=404, detail="Sessão não encontrada")
-        
         game_state = game_store.get(action.session_id)
+        
+        if game_state is None:
+            raise HTTPException(status_code=404, detail="Sessão não encontrada")
         
         # Verificar se o jogo já terminou
         total_rounds = game_state.total_rounds
@@ -415,10 +415,10 @@ Formato de resposta:
 async def end_game(action: PlayerAction) -> GameResponse:
     """Força a conclusão da aventura na rodada atual"""
     try:
-        if action.session_id not in game_store:
-            raise HTTPException(status_code=404, detail="Sessão não encontrada")
-        
         game_state = game_store.get(action.session_id)
+        
+        if game_state is None:
+            raise HTTPException(status_code=404, detail="Sessão não encontrada")
         
         if game_state.rounds:
             game_state.rounds[-1]["player_action"] = "Concluir aventura"
